@@ -71,25 +71,3 @@ private fun List<String>.find(oxygen: Boolean): String {
 
     return filtered.first()
 }
-
-fun Map<Int, List<Char>>.toEpsilon(): Int {
-    return withDefault { emptyList() }.keys.asSequence().sortedBy { it }.mapNotNull { this[it] }
-        .map { each -> each.groupBy { it } }.map {
-            if (it['1'].orEmpty().count() > it['0'].orEmpty().count()) {
-                '1'
-            } else {
-                '0'
-            }
-        }.joinToString("").toInt(2)
-}
-
-private fun Map<Int, List<Char>>.toGamma(): Int {
-    return withDefault { emptyList() }.keys.asSequence().sortedBy { it }.mapNotNull { this[it] }
-        .map { each -> each.groupBy { it } }.map {
-            if (it['1'].orEmpty().count() > it['0'].orEmpty().count()) {
-                '0'
-            } else {
-                '1'
-            }
-        }.joinToString("").toInt(2)
-}
