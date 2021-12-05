@@ -1,16 +1,14 @@
+import kotlin.math.abs
+
 fun main() {
     fun part1(input: List<String>): Int {
-        val vents = input.map { readVent(it) }
+        return input.map { readVent(it) }
             .filterNot { it.isDiagonal() }
-
-        return vents.map { it.trace() }
-            .flatten()
-            .groupBy { it }
-            .count { it.value.size > 1 }
+            .run(::calculateOverlaps)
     }
 
     fun part2(input: List<String>): Int {
-        return 0
+        return input.map { readVent(it) }.run(::calculateOverlaps)
     }
 
     // test if implementation meets criteria from the description, like:
@@ -19,42 +17,29 @@ fun main() {
         "Failed to resolve part1"
     }
 
-    /*check(part2(testInput) == 5) {
+    check(part2(testInput) == 12) {
         "Failed to resolve part2"
-    }*/
+    }
 
     val input = readInput("Day05")
     println(part1(input))
-    // println(part2(input))
+    println(part2(input))
 }
 
-fun Pair<Int, Int>.pathTo(other: Pair<Int, Int>): List<Pair<Int, Int>> {
-    val xFrom = first
-    val yFrom = second
-    val xTo = other.first
-    val yTo = other.second
-
-    val isVertical = xFrom != xTo
-
-    return if (isVertical) {
-        progression(xFrom, xTo).map { Pair(it, yFrom) }
-    } else {
-        progression(yFrom, yTo).map { Pair(xFrom, it) }
-    }
+private fun calculateOverlaps(ventDirections: List<VentDirection>): Int {
+    return ventDirections.map { it.toTrace() }
+        .flatten()
+        .groupBy { it }
+        .count{ it.value.size > 1 }
 }
 
-fun progression(start: Int, end: Int): IntProgression {
-    val step = if (start < end) 1 else -1
-    return IntProgression.fromClosedRange(start, end, step)
-}
-
-data class VentDirection(val start: Pair<Int, Int>, val end: Pair<Int, Int>) {
+private class VentDirection(val start: Pair<Int, Int>, val end: Pair<Int, Int>) {
 
     fun isDiagonal(): Boolean {
-        return start.first != end.first && start.second != end.second
+        return abs(start.first - end.first) == abs(start.second - end.second)
     }
 
-    fun trace(): List<Pair<Int, Int>> {
+    fun toTrace(): List<Pair<Int, Int>> {
         return start.pathTo(end)
     }
 }
